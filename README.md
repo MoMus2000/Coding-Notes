@@ -2,7 +2,7 @@
 Creating Latex Files for common coding patterns &amp; questions for interviews.
 
 ## List
-1. Sliding Window (U)
+1. Sliding Window
 2. Dynamic Programming
 3. Backtracking
 4. Graphs (TBD)
