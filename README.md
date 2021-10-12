@@ -11,7 +11,6 @@ Creating Latex Files for common coding patterns &amp; questions for interviews.
 7. Tree (TBD)
 8. Binary Search
 
-Pull requests are welcome
 ```
 MIT License
 
