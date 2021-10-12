@@ -415,6 +415,221 @@ We also need to decide how to move between the array.
 
 Best example of this Concept is "Peak Element"
 
+\newpage
+\section{Peak Element}
+Input: nums = [1,2,3,1]
+
+Output: 2
+
+Explanation: 3 is a peak element and your function should return the 
+index number 2.
+
+We use binary search. We find the peak with the condition 
+if nums[mid] > nums[mid+1] and nums[mid] > nums[mid-1]
+
+We move in the direction of the larger value as there is a higher chance
+of encountering our result in that area.
+
+\begin{lstlisting}
+class Solution:
+    def findPeakElement(self, nums: List[int]) -> int:
+        left = 0
+        right = len(nums)-1
+        if len(nums) == 1: return 0
+        while left <= right:
+            mid = int(left + (right-left)/2)
+            if mid != 0 and mid != len(nums)-1:
+                if nums[mid] > nums[mid-1] and nums[mid] > nums[mid+1]:
+                    return mid
+                elif nums[mid] < nums[mid+1]:
+                    left = mid + 1
+                elif nums[mid] < nums[mid-1]:
+                    right = mid - 1
+            if mid == 0:
+                if nums[mid]>nums[1]:
+                    return mid
+                else:
+                    return 1
+            if mid == len(nums)-1:
+                if nums[mid] > nums[mid-1]:
+                    return mid
+                else:
+                    return mid-1
+        return -1 
+\end{lstlisting}
+\section{Find maximum in a bitonic array}
+Given a bitonic array find the maximum value of the array. An array is said 
+to be bitonic if it has an increasing sequence of integers followed 
+immediately by a decreasing sequence of integers.
+
+Hence this problem is the same as finding the peak element.
+
+Input:
+1 4 8 3 2
+
+Output:
+8
+\newpage
+\section{Search an element in a bitonic array}
+This problem is a mix of both peak element and binary search. All the elements
+before the peak are sorted in ascending order, while the one's after the peak
+are in descending order. Hence we just need to find the peak index and after 
+excluding it, we run binary search on the two arrays, if the key is not the 
+peak.
+
+\begin{lstlisting}
+class Solution:
+    def findPeakElement(self, nums: List[int]) -> int:
+        left = 0
+        right = len(nums)-1
+        if len(nums) == 1: return 0
+        while left <= right:
+            mid = int(left + (right-left)/2)
+            if mid != 0 and mid != len(nums)-1:
+                if nums[mid] > nums[mid-1] and nums[mid] > nums[mid+1]:
+                    return mid
+                elif nums[mid] < nums[mid+1]:
+                    left = mid + 1
+                elif nums[mid] < nums[mid-1]:
+                    right = mid - 1
+            if mid == 0:
+                if nums[mid]>nums[1]:
+                    return mid
+                else:
+                    return 1
+            if mid == len(nums)-1:
+                if nums[mid] > nums[mid-1]:
+                    return mid
+                else:
+                    return mid-1
+        return -1 
+
+    def binary_search_asc(self, arr, target):
+        start = 0
+        end = len(arr)-1
+        while start <= end:
+            mid = int(left + (right-left)/2)
+            if arr[mid] == target:
+                return mid
+            elif arr[mid] < target:
+                left = mid+1
+            elif arr[mid] > target:
+                right = mid-1
+        return -1
+
+    def binary_search_desc(self, arr, target):
+        start = 0
+        end = len(arr)-1
+        while start <= end:
+            mid = int(left + (right-left)/2)
+            if arr[mid] == target:
+                return mid
+            elif arr[mid] < target:
+                right = mid -1
+
+            elif arr[mid] > target:
+                left = mid + 1
+        return -1
+\end{lstlisting}
+\section{Search in row wise and column wise sorted array}
+Write an efficient algorithm that searches for a target value in an m x n 
+integer matrix. The matrix has the following properties:
+
+Integers in each row are sorted in ascending from left to right.
+Integers in each column are sorted in ascending from top to bottom.
+
+Input: matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24]
+,[18,21,23,26,30]], target = 5
+
+Output: true
+\begin{lstlisting}
+class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        i = 0 
+        j = len(matrix[0])-1
+        while i>=0 and j>=0 and i<= len(matrix)-1 and j<= len(matrix[0])-1:
+            if matrix[i][j] == target:
+                return True
+            elif matrix[i][j] > target:
+                j-=1
+            elif matrix[i][j] < target:
+                i+=1
+        return False
+\end{lstlisting}
+\newpage
+\section{Allocate minimum number of pages}
+
+You are given N number of books. Every ith book has Ai number of pages. 
+You have to allocate contagious books to M number of students. There can be 
+many ways or permutations to do so. In each permutation, one of the M 
+students will be allocated the maximum number of pages. Out of all these 
+permutations, the task is to find that particular permutation in which the 
+maximum number of pages allocated to a student is minimum of those in all 
+the other permutations and print this minimum value. 
+
+Each book will be allocated to exactly one student. Each student has to be 
+allocated at least one book.
+
+Note: Return -1 if a valid assignment is not possible, and allotment should 
+be in contiguous order (see the explanation for better understanding).
+
+Input:
+
+N = 4
+
+A[] = {12,34,67,90}
+
+M = 2
+
+Output:
+
+113
+Explanation:
+
+Allocation can be done in following ways:
+{12} and {34, 67, 90} Maximum Pages = 191
+
+{12, 34} and {67, 90} Maximum Pages = 157
+
+{12, 34, 67} and {90}  Maximum Pages =113
+
+Therefore, the minimum of these cases is
+
+113, which is selected as the output.
+
+Main challenge is to create the is\_valid function, rest of the problem is
+trivial.
+
+\newpage
+\begin{lstlisting}
+class Solution:
+    def findPages(self,A, N, M):
+        start = max(A)
+        end = sum(A)
+        res = -1
+
+        def is_valid(arr, k, mid):
+            student = 1
+            curr_sum = 0
+            for i in range(0, len(arr)):
+                curr_sum += arr[i]
+                if curr_sum > mid:
+                    student+= 1
+                    curr_sum = arr[i]
+
+            if student > k:
+                return False
+            return True
+
+        while start <= end:
+            mid = int(start + (end-start)/2)
+            if is_valid(A, M, mid):
+                res = mid
+                end = mid - 1
+            else:
+                start = mid + 1
+        return res
+\end{lstlisting}
 \end{document}
 
 
