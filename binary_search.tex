@@ -1,0 +1,426 @@
+\documentclass[24pt, a4]{article}
+% To compile latex inside of vim 
+% ! clear; pdlatex name_of_file.tex or "%"
+
+
+% \usepackage[utf8]{inputenc}
+\usepackage[parfill]{parskip}
+\usepackage{listings}
+\usepackage{geometry}
+
+
+\title{Binary Search}
+\author{Mustafa Muhammad}
+\date{10th October 2021}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+
+List of Questions:
+\begin{enumerate}
+    \item Binary search
+    \item Binary search on reverse sorted array
+    \item Order not known search
+    \item First and last occurent of an element
+    \item Count of an element in a sorted array
+    \item Find floor of an element in a sorted array
+    \item Ceil of an element in a sorted array
+    \item Next alphabetical element
+    \item Find position of an element in an infinite sorted array
+    \item Index of first in sorted infite array (binary)
+    \item Minimum difference element in a sorted array
+    \item Peak element
+    \item Find maximum element in a bitonic array
+    \item Search an element in a bitonic array
+    \item Search in row and column wise sorted array
+    \item Allocate minimum number of pages
+    \end{enumerate}
+
+\newpage
+\section{Identification}
+If you see that the given array is sorted, think binary search.
+\begin{lstlisting}
+def searchInSorted(self,arr, N, K):
+        left = 0
+        right = len(arr)-1
+
+        while(left <= right):
+            mid = int(left + (right-left)/2)
+
+            if arr[mid] == K:
+                return 1
+
+            elif arr[mid] < K:
+                left = mid+1
+
+            else:
+                right = mid -1
+
+        return -1
+\end{lstlisting}
+
+\section{Binary search - Reverse Sorted Array}
+
+\begin{lstlisting}
+def binary_reverse_search(arr, target):
+    left = 0
+    right = len(arr)-1
+
+    while(left <= right):
+        mid = int(left+(right-left)/2)
+
+        if arr[mid] < target:
+            right = mid - 1
+
+        elif arr[mid] > target:
+            left = mid + 1
+
+        else:
+            return mid
+
+    return -1
+\end{lstlisting}
+\newpage
+
+\section{Order Not Known}
+
+We can check the difference between the first and last element. If the first 
+element is smaller than the last, we do normal binary search, else we simply 
+reverse the order.
+
+\section{First and Last Occurence of An element}
+
+We check the first occurence of an element by finding the occurence of an
+element and then proceeding to go left.
+Similarly we find the last occurence of an element by going right once found.
+
+\begin{lstlisting}
+def find(arr,n,x):
+    # code here
+    def first_occurence(arr, x):
+        left = 0
+        right = len(arr)-1
+        res = -1
+        while(left <= right):
+            mid = int(left+ (right-left)/2)
+            if arr[mid] == x:
+                res = mid
+                right = mid - 1
+            elif arr[mid] < x:
+                left = mid+1
+            elif arr[mid] > x:
+                right = mid - 1
+        return res
+    def last_occurence(arr, x):
+        left = 0
+        right = len(arr)-1
+        res = -1
+        while(left <= right):
+            mid = int(left+ (right-left)/2)
+            if arr[mid] == x:
+                res = mid
+                left = mid + 1
+            elif arr[mid] < x:
+                left = mid+1
+            elif arr[mid] > x:
+                right = mid - 1
+        return res
+    results = []
+    results.append(first_occurence(arr, x))
+    results.append(last_occurence(arr, x))
+    return results
+\end{lstlisting}
+\newpage
+\section{Count of an element in a sorted array}
+We find the first occurence of an element, then we find the last occurence of 
+an element. Formula for count = Last - FirstOccurence + 1 if neither element
+is -1, else we return 0.
+
+\section{Number of times a sorted array is rotated}
+Input: nums = [3,4,5,1,2]
+
+Output: 1
+
+Explanation: The original array was [1,2,3,4,5] rotated 3 times. We know this
+because the minimum elements index is 3. We perform binary search to find the
+smallest element. Its index in the number of rotations.
+
+\begin{lstlisting}
+class Solution:
+    def findMin(self, nums: List[int]) -> int:
+        # minimum in rotated sorted array
+        left = 0
+        right = len(nums)-1
+        n = len(nums)
+
+        while left <= right:
+            mid = int(left + (right-left)/2)
+
+            # To avoid index out of bounds
+            next_ = (mid+1)%n
+            prev = (mid-1+n)%n
+            
+            # Minimum element will be smaller than both its neighbors.
+            if nums[mid]<= nums[next_] and nums[mid] <= nums[prev]:
+                return nums[mid]
+            
+            #We go towards the unsorted array (location of min element)
+
+            elif nums[0] <= nums[mid]:
+                left = mid+1
+        
+            elif nums[mid] <= nums[-1]:
+                right = mid -1
+        
+        return nums[0]
+\end{lstlisting}
+
+\newpage
+\section{Find an element in a rotated sorted array}
+
+Building upon the previous question on rotation. We find the minimum index
+and divide the array in half and apply binary search on both sides.
+
+\begin{lstlisting}
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        # find minimum index , then binary search on both sides
+        def find_index(nums):
+            left = 0
+            right = len(nums)-1
+            n = len(nums)
+            while left <= right:
+                mid = int(left + (right-left)/2)
+                next_ = (mid+1)%n
+                prev = (mid-1+n)%n
+
+                if nums[mid]<=nums[next_] and nums[mid]<=nums[prev]:
+                    return mid
+                
+                elif nums[0] <= nums[mid]:
+                    left = mid + 1
+                
+                elif nums[mid] <= nums[-1]:
+                    right = mid -1
+            
+            return -1
+        
+        def binary_search(nums, target):
+            left = 0
+            right = len(nums)-1
+            while(left <= right):
+                mid = int(left + (right-left)/2)
+                if nums[mid] == target:
+                    return mid
+                elif nums[mid] < target:
+                    left = mid + 1
+                elif nums[mid] > target:
+                    right = mid -1
+            return -1
+        min_index = find_index(nums)
+        left_arr = binary_search(nums[0:min_index], target)
+        right_arr = binary_search(nums[min_index:], target)
+        
+        return right_arr+len(nums[0:min_index]) if right_arr != -1 else left_arr
+\end{lstlisting}
+\newpage
+\section{Searching in a nearly sorted array}
+\begin{lstlisting}
+class Solution:
+    def binary_search_on_nearly_sorted_array(arr, target):
+        left = 0
+        right = len(arr)-1
+
+        while left <= right:
+            mid = int(left + (right-left)/2)
+            if arr[mid] == target:
+                return mid
+            elif mid-1 >= left and arr[mid-1] == target:
+                return mid-1
+            elif mid+1 <= right and arr[mid+1] == target:
+                return mid+1
+            elif arr[mid] < target:
+                left = mid+2
+            elif arr[mid] > target:
+                right = mid -2 
+        return -1 
+\end{lstlisting}
+\newpage
+\section{Find floor of an element in a sorted array}
+Input:
+
+N = 7, x = 5
+
+arr[] = {1,2,8,10,11,12,19}
+
+Output: 1
+
+Explanation: Largest Number less than 5 is
+2 (i.e K = 2), whose index is 1(0-based
+indexing).
+\begin{lstlisting}
+class Solution:
+    def findFloor(self,arr,N,X):
+            #Your code here
+            left = 0
+            right = len(arr)-1
+            res = -1
+            while left <= right:
+                mid = int(left + (right-left)/2)
+                if arr[mid] == X:
+                    return mid
+                if arr[mid] < X:
+                    res = mid
+                    left = mid + 1
+                
+                elif arr[mid] > X:
+                    right = mid - 1
+            return res
+\end{lstlisting}
+
+\newpage
+\section{Find ceil of an element in a sorted array}
+For example, let the input array be {1, 2, 8, 10, 10, 12, 19}
+
+For x = 0:    floor doesn't exist in array,  ceil  = 1
+
+For x = 1:    floor  = 1,  ceil  = 1
+
+For x = 5:    floor  = 2,  ceil  = 8
+
+For x = 20:   floor  = 19,  ceil doesn't exist in array
+\begin{lstlisting}
+class Solution:
+    def findFloor(self,arr,N,X):
+            #Your code here
+            left = 0
+            right = len(arr)-1
+            res = -1
+            while left <= right:
+                mid = int(left + (right-left)/2)
+                if arr[mid] == X:
+                    return mid
+                if arr[mid] < X:
+                    left = mid + 1
+                elif arr[mid] > X:
+                    res = mid
+                    right = mid - 1
+            return res
+\end{lstlisting}
+
+\section{Next alphabetical element}
+Given an array of letters sorted in ascending order, find the smallest letter 
+in the the array which is greater than a given key letter.
+Problem is very similar to ceil, as in this particular problem we just find 
+the next possible alphabet.
+
+Changes:
+1. Alphabets instead of numbers
+2. Even if we find the target alphabet, we return the next alphabet.
+\begin{lstlisting}
+if arr[mid] == key:
+    left  = mid+1
+\end{lstlisting}
+
+\newpage
+\section{Find position of an element in an infinite sorted array}
+\begin{lstlisting}
+class Solution:
+    def binary_search_on_inf(arr, target):
+        start = 0
+        end = 1
+
+        # Moving up the end index and making start the previous end
+        while arr[end] < target:
+            start = end
+            end = end*2
+        
+        while start <= end:
+            mid = int(left + (right-left)/2)
+            if arr[mid] == target:
+                return mid
+            elif arr[mid] < target:
+                left = mid + 1
+            elif arr[mid] > target:
+                right = mid -1
+        return -1
+\end{lstlisting}
+
+\newpage
+\section{Index of First "1" in an Infinite 0/1 Sorted Arr}
+
+Combination of binary search on an infinite array and first occurence of an
+element.
+\begin{lstlisting}
+class Solution:
+    def binary_search_on_inf(arr):
+        start = 0
+        end = 1
+
+        # Moving up the end index and making start the previous end
+        while arr[end] != 0:
+            start = end
+            end = end*2
+        
+        res = -1
+        while start <= end:
+            mid = int(left + (right-left)/2)
+            if arr[mid] == target:
+                res = mid
+                right = mid - 1
+            elif arr[mid] < target:
+                left = mid + 1
+            elif arr[mid] > target:
+                right = mid -1
+        return res
+\end{lstlisting}
+
+\newpage
+\section{Minimum Difference Element in a Sorted Array}
+
+We run binary search normally as we do, in the end, left and right will be 
+in between the key value, all we have to do is return the value with the min.
+difference between the two.
+
+Another way to think about this is to find the ceil and floor of the array
+using binary search.
+
+\begin{lstlisting}
+class Solution:
+    def binary_search(arr, target):
+        start = 0
+        end = 1
+        while start <= end:
+            mid = int(left + (right-left)/2)
+            if arr[mid] == target:
+                return mid
+            elif arr[mid] < target:
+                left = mid + 1
+            elif arr[mid] > target:
+                right = mid -1
+        return min(abs(target - arr[left]), abs(target-arr[right]))
+\end{lstlisting}
+
+\section{Binary search on answer}
+
+There are some cases where the array is not sorted but we can still apply
+binary search.
+
+We need to find a criteria inorder to split the array and find our answer.
+
+We also need to decide how to move between the array.
+
+Best example of this Concept is "Peak Element"
+
+\end{document}
+
+
+
+
+
+
+
+
