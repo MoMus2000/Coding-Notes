@@ -7,7 +7,7 @@ Creating Latex Files for common coding patterns &amp; questions for interviews.
 3. Backtracking
 4. Graphs (TBD)
 5. Stack & Queue (TBD)
-6. Heap (TBD)
+6. Heap
 7. Tree (TBD)
 8. Binary Search
 
