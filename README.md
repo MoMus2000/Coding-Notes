@@ -1,5 +1,5 @@
 # Coding-Notes
-Creating Latex Files for common coding patterns &amp; questions for interviews.
+Creating Latex Files for different explored topics (DS \&amp; A, DL and RL).
 
 ## List
 1. Sliding Window
