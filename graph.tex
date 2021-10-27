@@ -284,4 +284,502 @@ class Solution:
         
         return distance
 \end{lstlisting}
+\newpage
+\section{Bellman Ford algorithm}
+Used to handle negative edge weights which can't be done using Djikstra's.
+
+Trivial to code, involves going through all the edges and vertices.
+
+\begin{lstlisting}
+class Solution:
+	def isNegativeWeightCycle(self, n, edges):
+		distances = [float("inf")]*n
+		distances[0] = 0
+		for i in range(0, n):
+		    temp = distances.copy()
+		    for s, d, p in edges:
+		        if distances[s] == float("inf"):
+		            continue
+		        if distances[s] + p < temp[d]:
+		            temp[d] = distances[s]+p
+		    distances = temp
+        return distances[-1]
+\end{lstlisting}
+\section{Detecting Negative cycle (Bellman-Ford)}
+To detect a negative cycle, we run the algorithm again and see if there are 
+any changes from the previous distances array.
+\begin{lstlisting}
+class Solution:
+	def isNegativeWeightCycle(self, n, edges):
+		distances = [float("inf")]*n
+		distances[0] = 0
+		for i in range(0, n):
+		    temp = distances.copy()
+		    for s, d, p in edges:
+		        if distances[s] == float("inf"):
+		            continue
+		        if distances[s] + p < temp[d]:
+		            temp[d] = distances[s]+p
+		    distances = temp
+		for j in range(0, n):
+		    for s, d, p in edges:
+		        temp = distances.copy()
+		        if distances[s] == float('inf'):
+		            continue
+		        if distances[s] + p < temp[d]:
+		            return True
+		return False
+\end{lstlisting}
+\newpage
+\section{Floyd-Washall's Algorithm}
+\underline {Dijkstra's}
+
+Shortest path from one node to all nodes
+
+\underline {Bellman-Ford}
+
+Shortest path from one node to all nodes - negative weights allowed.
+
+\underline {Floyd-Washall's Algorithm}
+
+Shortest path of all vertices, negative edges are allowed.
+
+\begin{lstlisting}
+class Solution:
+	def shortest_distance(self, matrix):
+		for k in range(0, len(matrix)):
+		    for i in range(0, len(matrix)):
+		        for j in range(0, len(matrix)):
+		            #-1 corresponds to an edge not existing
+		            if matrix[i][k]==-1 or matrix[k][j]==-1:
+		                continue
+		            elif matrix[i][j] == -1:
+		                matrix[i][j] = matrix[i][k] + matrix[k][j]
+		            elif matrix[i][j] > matrix[i][k] + matrix[k][j]:
+		                matrix[i][j] = matrix[i][k] + matrix[k][j]
+		return matrix
+\end{lstlisting}
+\newpage
+\section{Prim's algorithm}
+
+You are given an array points representing integer coordinates of some points 
+on a 2D-plane, where points[i] = [xi, yi].
+
+Return the minimum cost to make all points connected. All points are connected
+if there is exactly one simple path between any two points.
+
+Input: points = [[0,0],[2,2],[3,10],[5,2],[7,0]]
+Output: 20
+Explanation:
+
+We can connect the points as shown above to get the minimum cost of 20.
+Notice that there is a unique path between every pair of points.
+
+Every node connected together without any cycles.
+\begin{lstlisting}
+import heapq
+class Solution:
+    def minCostConnectPoints(self, points: List[List[int]]) -> int:
+        adj_list = {}
+        for i in range(0, len(points)):
+            adj_list[i] = []
+        for j in range(0, len(points)):
+            x1, y1 = points[j]
+            for k in range(j+1, len(points)):
+                x2, y2 = points[k]
+                manhattan_distance = abs(x1-x2) + abs(y1-y2)
+                adj_list[k].append((manhattan_distance, j))
+                adj_list[j].append((manhattan_distance, k))
+        
+        #Prims algorithm
+        visited = set()
+        res = 0
+        min_heap = [(0,0)]
+        while len(visited) != len(points):
+            popped = heapq.heappop(min_heap)
+            if popped[1] in visited:
+                continue
+            visited.add(popped[1])
+            res+= popped[0]
+            for neighbors in adj_list[popped[1]]:
+                if neighbors[1] not in visited:
+                    heapq.heappush(min_heap, neighbors)
+        return res
+\end{lstlisting}
+
+\newpage
+\section{Course Schedule}
+Input: numCourses = 2, prerequisites = [[1,0],[0,1]]
+Output: false
+
+Explanation: There are a total of 2 courses to take.
+To take course 1 you should have finished course 0, and to take course 0 
+you should also have finished course 1. So it is impossible.
+
+Input: numCourses = 2, prerequisites = [[1,0]]
+Output: true
+
+Explanation: There are a total of 2 courses to take. 
+To take course 1 you should have finished course 0. So it is possible.
+\begin{lstlisting}
+class Solution:
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        # step 1, create an adjacency list
+        # step 2, create a visiting set
+        # step 3, run dfs
+        adj_list = {}
+        for i in range(0, numCourses):
+            adj_list[i] = []
+        for req in prerequisites:
+            adj_list[req[0]].append(req[1])
+        visited = set()
+
+        def dfs(course):
+            if course in visited:
+                return False
+            if adj_list[course] == []:
+                return True
+            visited.add(course)
+            for reqs in adj_list[course]:
+                    if not dfs(reqs):
+                        return False
+            visited.remove(course)
+            adj_list[course] = []
+            return True
+
+        for n in range(numCourses):
+            if not dfs(n):
+                return False
+        return True
+\end{lstlisting}
+\newpage
+\section{Course Schedule}
+In short detecting cycle in graph.
+\begin{lstlisting}
+class Solution:
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        adj_list = {}
+        for i in range(0, numCourses):
+            adj_list[i] = []
+        for req in prerequisites:
+            adj_list[req[0]].append(req[1])
+
+        visited = set()
+        anscestor = set()
+
+        def dfs(course):
+            visited.add(course)
+            anscestor.add(course)
+            for reqs in adj_list[course]:
+                if reqs not in visited:
+                    if dfs(reqs) == False:
+                        return False
+                elif reqs in anscestor:
+                    return False
+            anscestor.remove(course)
+            return True
+
+        for n in range(numCourses):
+            if n not in visited:
+                if dfs(n) == False:
+                    return False
+        return True
+\end{lstlisting}
+\newpage
+\section{Course Schedule II}
+Return a topological sort, taking care there are no cycles.
+\begin{lstlisting}
+class Solution:
+    def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:
+        adj_map = {}
+        for i in range(numCourses):
+            adj_map[i] = []
+        for arr in prerequisites:
+            start = arr[0]
+            end = arr[1]
+            adj_map[start].append(end)
+        
+        visited = set()
+        anscestor = set()
+        out = []
+
+        def dfs(node):
+            visited.add(node)
+            anscestor.add(node)
+            for child in adj_map[node]:
+                if child not in visited:
+                    if dfs(child) == False:
+                        return False
+                elif child in anscestor:
+                    return False
+            out.append(node)
+            anscestor.remove(node)
+            return True
+
+        for n in range(numCourses):
+            if n not in visited:
+                if dfs(n) == False:
+                    return []
+        return out
+\end{lstlisting}
+\newpage
+\section{Number of Islands}
+Input: grid = [
+
+  ["1","1","1","1","0"],
+  
+  ["1","1","0","1","0"],
+  
+  ["1","1","0","0","0"],
+  
+  ["0","0","0","0","0"]
+]
+
+Output: 1
+
+Input: grid = [
+
+  ["1","1","0","0","0"],
+
+  ["1","1","0","0","0"],
+
+  ["0","0","1","0","0"],
+
+  ["0","0","0","1","1"]
+]
+
+Output: 3
+\begin{lstlisting}
+class Solution:
+    def numIslands(self, grid: List[List[str]]) -> int: 
+        count = 0
+        def dfs(grid, i, j):
+            if i >= len(grid) or i<0 or j <0 or j >= len(grid[0]):
+                return 
+            if grid[i][j] == "0":
+                return
+            grid[i][j] = "0"
+            dfs(grid, i+1, j)
+            dfs(grid, i-1, j)
+            dfs(grid, i, j+1)
+            dfs(grid, i, j-1)
+            return
+        
+        for i in range(0, len(grid)):
+            for j in range(0, len(grid[0])):
+                if grid[i][j] == "1":
+                    dfs(grid,i,j)
+                    count += 1
+        return count
+\end{lstlisting}
+\newpage
+\section{Clone Graph}
+Given a reference of a node in a connected undirected graph.
+
+Return a deep copy (clone) of the graph.
+
+Each node in the graph contains a value (int) and a list (List[Node]) of 
+its neighbors.
+
+\begin{lstlisting}
+class Node {
+    
+    public int val;
+
+    public List<Node> neighbors;
+
+}
+class Solution:
+    def cloneGraph(self, node: 'Node') -> 'Node':
+        old_to_new = {}
+        def dfs(node):
+            if node == None:
+                return None
+            
+            if node in old_to_new:
+                return old_to_new[node]
+            
+            copy = Node(node.val)
+            old_to_new[node] = copy
+            for vals in node.neighbors:
+                copy.neighbors.append(dfs(vals))
+            return copy
+        
+        return dfs(node)
+\end{lstlisting}
+\newpage
+\section{Pacific Atlantic Waterflow}
+The Pacific Ocean touches the island's left and top edges, 
+and the Atlantic Ocean touches the island's right and bottom edges.
+
+The island receives a lot of rain, and the rain water can flow to neighboring 
+cells directly north, south, east, and west if the neighboring cell's height 
+is less than or equal to the current cell's height. Water can flow from any 
+cell adjacent to an ocean into the ocean.
+
+NOTE: The approach is to move from the pacific to areas that can be reached by
+the edge blocks, perform the same for the atlantic and return the coordinates
+that are intersections of both places.
+\begin{lstlisting}
+class Solution:
+    def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
+        pacific = set()
+        atlantic = set()
+        def dfs(heights, i, j, visited, prev):
+            if i<0 or j<0 or i>=len(heights) or j>= len(heights[0]):
+                return
+            if (i, j) in visited:
+                return
+            if heights[i][j] < prev:
+                return
+            visited.add((i,j))
+            dfs(heights, i+1, j, visited, heights[i][j])
+            dfs(heights, i-1, j, visited, heights[i][j])
+            dfs(heights, i, j+1, visited, heights[i][j])
+            dfs(heights, i, j-1, visited, heights[i][j])
+            return
+        #top_row
+        for i in range(0, len(heights[0])):
+            dfs(heights, 0, i, pacific, float('-inf'))
+        #Left column
+        for j in range(0, len(heights)):
+            dfs(heights, j, 0, pacific, float('-inf'))
+        #bottom row
+        for k in range(0, len(heights[0])):
+            dfs(heights, len(heights)-1, k, atlantic, float('-inf'))
+        #right column
+        for l in range(0, len(heights)):
+            dfs(heights, l, len(heights[0])-1, atlantic, float('-inf'))
+        res = []
+        for i in range(0, len(heights)):
+            for j in range(0, len(heights[0])):
+                if (i, j) in pacific and (i,j) in atlantic:
+                    res.append((i, j))
+        return res
+\end{lstlisting}
+\newpage
+\section{Network Time delay}
+Dijkstra's algorithm where we find the minimum distance from source vertex "k".
+
+You are given a network of n nodes, labeled from 1 to n. You are also given 
+times, a list of travel times as directed edges times[i] = (ui, vi, wi), 
+where ui is the source node, vi is the target node, and wi is the time 
+it takes for a signal to travel from source to target.
+
+We will send a signal from a given node k. Return the time it takes for 
+wall the n nodes to receive the signal. If it is impossible for all the 
+n nodes to receive the signal, return -1.
+
+Input: times = [[2,1,1],[2,3,1],[3,4,1]], n = 4, k = 2
+Output: 2
+\begin{lstlisting}
+import heapq
+class Solution:
+    def networkDelayTime(self, times: List[List[int]], n: int, k: int) -> int:
+        adj_map = {}
+        for n in range(1, n+1):
+            adj_map[n] = []
+        for arr in times:
+            start = arr[0]
+            end = arr[1]
+            weight = arr[2]
+            if start in adj_map:
+                adj_map[start].append((weight, end))
+            else:
+                adj_map[start] = (weight, end)
+        min_heap = [(0, k)]
+        t = -1
+        visited = set()
+        while len(min_heap) != 0:
+            city = heapq.heappop(min_heap)
+            if city[1] in visited:
+                continue
+            visited.add(city[1])
+            t = max(t, city[0])
+            for neighbors in adj_map[city[1]]:
+                if neighbors not in visited:
+                    heapq.heappush(min_heap, (neighbors[0]+city[0], neighbors[1]))
+        return t if len(visited) == n else -1
+\end{lstlisting}
+\newpage
+\section{Word Search}
+Given an m x n grid of characters board and a string word, return true if 
+word exists in the grid.
+The word can be constructed from letters of sequentially adjacent cells, 
+where adjacent cells are horizontally or vertically neighboring. The 
+same letter cell may not be used more than once.
+\begin{lstlisting}
+class Solution:
+    def exist(self, matrix: List[List[str]], word: str) -> bool:
+        visited = set()
+
+        def dfs(matrix, i, j, count):
+            if count == len(word):
+                return True
+
+            if i < 0 or j< 0 or i >= len(matrix) or j>= len(matrix[0]):
+                return False
+
+            if word[count] != matrix[i][j]:
+                return False
+
+            if (i, j) in visited:
+                return False
+
+            visited.add((i, j))
+
+            a = dfs(matrix, i+1, j, count+1)
+            b = dfs(matrix, i-1, j, count+1)
+            c = dfs(matrix, i, j+1, count+1)
+            d = dfs(matrix, i, j-1, count+1)
+            visited.remove((i, j))
+
+            return a or b or c or d
+
+        for i in range(0, len(matrix)):
+            for j in range(0, len(matrix[0])):
+                if word[0] == matrix[i][j]:
+                    if dfs(matrix, i, j, 0):
+                        return True
+        return False
+\end{lstlisting}
+\newpage
+\section{Island Perimeter}
+You are given row x col grid representing a map where grid[i][j] = 1 
+represents land and grid[i][j] = 0 represents water.
+
+Grid cells are connected horizontally/vertically (not diagonally). The 
+grid is completely surrounded by water, and there is exactly one island 
+(i.e., one or more connected land cells).
+
+The island doesn't have "lakes", meaning the water inside isn't connected to 
+the water around the island. One cell is a square with side length 1. 
+The grid is rectangular, width and height don't exceed 100. 
+Determine the perimeter of the island.
+
+Input: grid = [[0,1,0,0],[1,1,1,0],[0,1,0,0],[1,1,0,0]]
+Output: 16
+Explanation: The perimeter is the 16 yellow stripes in the image above.
+\begin{lstlisting}
+class Solution:
+    def islandPerimeter(self, grid: List[List[int]]) -> int:
+        
+        visited = set()
+        
+        def dfs(matrix, i, j):
+            if i < 0 or j < 0 or i >= len(matrix) or j >= len(matrix[0]):
+                return 1
+            if matrix[i][j] == 0:
+                return 1
+            if (i, j) in visited:
+                return 0
+            visited.add((i, j))
+            return dfs(matrix, i+1, j)+dfs(matrix, i-1, j)+dfs(matrix, i, j+1)+dfs(matrix, i, j-1)
+        
+        for i in range(0, len(grid)):
+            for j in range(0, len(grid[0])):
+                if grid[i][j] == 1:
+                    return dfs(grid, i, j)
+        return -1
+\end{lstlisting}
 \end{document}
