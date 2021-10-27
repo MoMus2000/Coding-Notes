@@ -1,5 +1,5 @@
 # Coding-Notes
-Creating Latex Files for different explored topics (DS \&amp; A, DL and RL).
+Creating Latex Files for different explored topics (DS and  A, DL and RL).
 
 ## List
 1. Sliding Window
