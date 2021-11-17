@@ -8,8 +8,10 @@ Creating Latex Files for different explored topics (DS and  A, DL and RL).
 4. Graphs (TBD)
 5. Stack & Queue (TBD)
 6. Heap
-7. Tree (TBD)
+7. Tree
 8. Binary Search
+9. Array
+10. Linked List
 
 ### Please feel free to submit a pull request or open an issue
 
