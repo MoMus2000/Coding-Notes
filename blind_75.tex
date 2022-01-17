@@ -1,0 +1,642 @@
+\documentclass[24pt, a4]{article}
+% To compile latex inside of vim 
+% ! clear; pdlatex name_of_file.tex or "%"
+
+
+% \usepackage[utf8]{inputenc}
+\usepackage[parfill]{parskip}
+\usepackage{listings}
+\usepackage{geometry}
+\usepackage{multicol}
+
+
+\title{Blind 75 Coding Questions}
+\author{Mustafa Muhammad}
+\date{27th December 2021}
+
+\begin{document}
+
+\maketitle
+
+\begin{multicols}{2}
+\textbf{Array}
+\begin{enumerate}
+	\item{Two Sum}
+	\item{Best Time to Buy and Sell Stock}
+	\item{Contains Duplicate}
+	\item{Product of Array Except Self}
+	\item{Maximum Subarray}
+	\item{Maximum Product Subarray}
+	\item{Find Minimum in Rotated Sorted Array}
+	\item{Search in Rotated Sorted Array}
+	\item{3 Sum}
+	\item{Container With Most Water}
+\end{enumerate}
+
+\columnbreak
+\textbf{Binary}
+\begin{enumerate}
+	\item{Sum of Two Integers}
+	\item{Number of 1 Bits}
+	\item{Counting Bits}
+	\item{Missing Number}
+	\item{Reverse Bits}
+\end{enumerate}
+
+\end{multicols}
+
+\begin{multicols}{2}
+
+\textbf{Dynamic Programming}
+\begin{enumerate}
+	\item{Climbing Stairs}
+	\item{Coin Change}
+	\item{Longest Increasing Subsequence}
+	\item{Longest Common Subsequence}
+	\item{Word Break Problem}
+	\item{Combination Sum}
+	\item{House Robber}
+	\item{House Robber II}
+	\item{Decode Ways}
+	\item{Unique Paths}
+	\item{Jump Game}
+\end{enumerate}
+
+\columnbreak
+
+\textbf{Graph}
+\begin{enumerate}
+	\item{Clone Graph}
+	\item{Course Schedule}
+	\item{Pacific Atlantic Water Flow}
+	\item{Number of Islands}
+	\item{Longest Consecutive Sequence}
+	\item{Alien Dictionary (Leetcode Premium)}
+	\item{Graph Valid Tree (Leetcode Premium)}
+	\item{Number of Connected Components in an Undirected Graph (Leetcode Premium)}
+\end{enumerate}
+
+\end{multicols}
+
+\begin{multicols}{2}
+
+\textbf{Interval}
+\begin{enumerate}
+	\item{Insert Interval}
+	\item{Merge Intervals}
+	\item{Non-overlapping Intervals}
+	\item{Meeting Rooms (Leetcode Premium)}
+	\item{Meeting Rooms II (Leetcode Premium)}
+\end{enumerate}
+
+\columnbreak
+
+\textbf{LinkedList}
+\begin{enumerate}
+	\item{Reverse a Linked List}
+	\item{Detect Cycle in a Linked List}
+	\item{Merge Two Sorted Lists}
+	\item{Merge K Sorted Lists}
+	\item{Remove Nth Node From End Of List}
+	\item{Reorder List}
+\end{enumerate}
+
+\end{multicols}
+
+\begin{multicols}{2}
+
+\textbf{Matrix}
+\begin{enumerate}
+	\item{Set Matrix Zeroes}
+	\item{Spiral Matrix}
+	\item{Rotate Image}
+	\item{Word Search}
+\end{enumerate}
+
+\textbf{String}
+\begin{enumerate}
+	\item{Longest Substring Without Repeating Characters}
+	\item{Longest Repeating Character Replacement}
+	\item{Minimum Window Substring}
+	\item{Valid Anagram}
+	\item{Group Anagrams}
+	\item{Valid Parentheses}
+	\item{Valid Palindrome}
+	\item{Longest Palindromic Substring}
+	\item{Palindromic Substrings}
+	\item{Encode and Decode Strings (Leetcode Premium)}
+\end{enumerate}
+
+\columnbreak
+
+\textbf{Tree}
+\begin{enumerate}
+	\item{Maximum Depth of Binary Tree}
+	\item{Same Tree}
+	\item{Invert/Flip Binary Tree}
+	\item{Binary Tree Maximum Path Sum}
+	\item{Binary Tree Level Order Traversal}
+	\item{Serialize and Deserialize Binary Tree}
+	\item{Subtree of Another Tree}
+	\item{Construct Binary Tree from Preorder and Inorder Traversal}
+	\item{Validate Binary Search Tree}
+	\item{Kth Smallest Element in a BST}
+	\item{Lowest Common Ancestor of BST}
+	\item{Implement Trie (Prefix Tree)}
+	\item{Add and Search Word}
+	\item{Word Search II}
+\end{enumerate}
+
+\end{multicols}
+
+\textbf{Heap}
+\begin{enumerate}
+	\item{Merge K Sorted Lists}
+	\item{Top K Frequent Elements}
+	\item{Find Median from Data Stream}
+\end{enumerate}
+
+\newpage
+\section{Two Sum}
+Return index of two elements in the array that add upto the target value.
+\begin{lstlisting}
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        hash_map = {}
+        
+        for idx, num in enumerate(nums):
+            res = target - num
+            if res not in hash_map:
+                hash_map[num] = idx
+            else:
+                return idx, hash_map[res]
+        
+        return -1, -1
+\end{lstlisting}
+
+\section{Best Time To Buy and Sell Stock}
+Return the maximum profit that can be made using the price values provided.
+\begin{lstlisting}
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        profit = 0
+        buying_price = float('inf')
+        for i in range(0, len(prices)):
+            buying_price = min(prices[i], buying_price)
+            profit = max(profit, prices[i] - buying_price)
+        return profit
+\end{lstlisting}
+
+\section{Contains Duplicate}
+Return boolean value if there are duplicate elements in the array.
+\begin{lstlisting}
+class Solution:
+    def containsDuplicate(self, nums: List[int]) -> bool:
+        dup = set()
+        for i in range(len(nums)):
+            if nums[i] not in dup:
+                dup.add(nums[i])
+            else:
+                return True
+        return False
+\end{lstlisting}
+
+\section{Product of Array Except Self}
+Input: nums = [1,2,3,4]
+Output: [24,12,8,6]
+
+Input: nums = [-1,1,0,-3,3]
+Output: [0,0,9,0,0]
+\begin{lstlisting}
+class Solution:
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        res = [1] * len(nums)
+        
+        
+        prefix = 1
+        for i in range(0, len(nums)):
+            res[i] *= prefix
+            prefix *= nums[i]
+            
+        postfix = 1
+        for j in range(len(nums)-1, -1, -1):
+            res[j] *= postfix
+            postfix *= nums[j]
+        
+        return res
+\end{lstlisting}
+\section{Maximum Subarray}
+Trick to solving is if the current sum is less than zero we set the current sum to zero.
+\begin{lstlisting}
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        #Kadane's algorithm repeated work
+        max_sum = nums[0]
+        curr_sum = 0
+        for i in range(0, len(nums)):
+            if curr_sum < 0:
+                curr_sum = 0
+            curr_sum += nums[i]
+            max_sum = max(curr_sum , max_sum)
+        return max_sum
+\end{lstlisting}
+\section{Maximum Product Subarray}
+Technique to solving is to maintain current minimum and current maximum and utilize both to get the maximum answer.
+\begin{lstlisting}
+class Solution:
+    def maxProduct(self, nums: List[int]) -> int:
+        #if the max subarray is just one value
+        result = max(nums)
+        curr_min = 1
+        curr_max = 1
+        for n in nums:
+            temp = curr_max
+            curr_max = max(curr_max*n, curr_min*n, n)
+            curr_min = min(curr_min*n, temp*n, n)
+            result = max(result, curr_max)
+        return result
+\end{lstlisting}
+\section{Container with most water}
+Two pointer approach and move in the direction of greater height.
+\begin{lstlisting}
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        right = 0
+        left = len(height)-1
+        max_area = 0
+        while right < left:
+            min_height = min(height[right], height[left])
+            max_area = max(max_area, min_height * (left-right))
+            if height[right] < height[left]:
+                right+=1
+            else:
+                left -= 1
+        return max_area
+\end{lstlisting}
+
+\section{Find minimum in rotated sorted array}
+\begin{lstlisting}
+class Solution:
+    def findMin(self, nums: List[int]) -> int:
+        # binary search
+        left = 0
+        right = len(nums)-1
+        while left <= right:
+            mid = int(left + (right-left)/2)
+            
+            next = (mid+1)%len(nums)
+            prev = (mid-1+len(nums))%len(nums)
+            
+            if nums[mid] <= nums[prev] and nums[mid] <= nums[next]:
+                return nums[mid]
+            elif nums[0] <= nums[mid]:
+                left = mid + 1
+            elif nums[mid] <= nums[-1]:
+                right = mid -1
+        return nums[0]
+\end{lstlisting}
+
+\section{Search in rotated sorted array}
+\begin{lstlisting}
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        
+        def find_min_index(nums):
+            left = 0
+            right = len(nums)-1
+            
+            while left <= right:
+                mid = int(left + (right-left)/2)
+                
+                next = (mid+1)%len(nums)
+                prev = (mid-1+len(nums))%len(nums)
+                
+                if nums[mid] <= nums[prev] and nums[mid] <= nums[next]:
+                    return mid
+                
+                elif nums[0] <= nums[mid]:
+                    left = mid + 1
+                elif nums[mid] <= nums[-1]:
+                    right = mid -1
+            
+            return -1
+        
+        def binary_search(nums, target):
+            left = 0
+            right = len(nums)-1
+            
+            while left <= right:
+                mid = int(left + (right-left)/2)
+                
+                if nums[mid] == target:
+                    return mid
+                
+                elif nums[mid] < target:
+                    left = mid + 1
+                
+                elif nums[mid] > target:
+                    right = mid -1
+            
+            return -1
+        
+        ind = find_min_index(nums)
+                
+        arr1 = nums[0:ind]
+        arr2 = nums[ind:]
+        
+        val = binary_search(arr1, target)
+        val2 = binary_search(arr2, target)
+ 
+        return val if val2 == -1 else val2+len(arr1)
+\end{lstlisting}
+\section{3 Sum}
+Sort the array and run two sum II for each unique element in the loop.
+\begin{lstlisting}
+class Solution:
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        res = []
+        nums = sorted(nums)
+        for i in range(0, len(nums)):
+            if i > 0 and nums[i] == nums[i-1]:
+                continue
+            left = i+1
+            right = len(nums)-1
+            
+            while left < right:
+                summed = nums[left] + nums[right] + nums[i]
+                if summed == 0:
+                    res.append((nums[left], nums[right], nums[i]))
+                    left += 1
+                    while nums[left] == nums[left -1] and left < right:
+                        left += 1
+                
+                elif summed < 0:
+                    left += 1
+                
+                elif summed > 0:
+                    right -=1
+        return res
+\end{lstlisting}
+\section{Container with most water}
+\begin{lstlisting}
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        left = 0
+        right = len(height)-1
+        max_area = -1
+        while left < right:
+            h = min(height[left], height[right])
+            area = (right - left) * h
+            max_area = max(max_area, area)
+            if height[left] < height[right]:
+                left += 1
+            elif height[right] < height[left]:
+                right -=1
+            elif height[right] == height[left]:
+                left+=1
+        return max_area
+\end{lstlisting}
+
+\section{Binary - Sum of two integers}
+We make use of xor a=1, b=0, ans=1. a=1, b=1, ans=0
+
+When we have two one's we have a carry. If a and b are 1, we have a carry. a\&b left shift 1
+
+If we dont have a carry we are done.
+
+Code doesnt work in python since the assumption that we make is that the length of integers is 32 bits. However python allows for an infinite length of integers. Java does not.
+\begin{lstlisting}
+class Solution {
+    public int getSum(int a, int b) {
+        while( b!= 0){
+            int temp = (a &b) <<1;
+            a = a ^ b;
+            b = temp;
+        }
+        return a;
+    }
+}
+\end{lstlisting}
+
+\section{Number of one bits}
+
+Count the number of 1's in bits.
+\begin{lstlisting}
+class Solution:
+    def hammingWeight(self, n: int) -> int:
+        total = 0
+        while n != 0:
+            total += n %2 
+            n = n >> 1
+        return total
+\end{lstlisting}
+
+\section{Counting Bits}
+Dynamic Programming Solution
+\begin{lstlisting}
+class Solution:
+    def countBits(self, n: int) -> List[int]:
+        dp = [0]*(n+1)
+        offset = 1
+        
+        for i in range(1, n+1):
+            if offset * 2 == i:
+                offset = i
+            
+            dp[i] = 1 + dp[i - offset]
+        
+        return dp
+\end{lstlisting}
+
+\section{Missing Number}
+\begin{lstlisting}
+class Solution:
+    def missingNumber(self, nums: List[int]) -> int:
+        xor1 = 0
+        xor2 = nums[0]
+        for i in range(1, len(nums)+1):
+            xor1 ^= i
+        for j in range(1, len(nums)):
+            xor2 ^= nums[j]
+        
+        return xor1 ^ xor2
+\end{lstlisting}
+
+\section{Reverse Bits}
+\begin{lstlisting}
+class Solution:
+    def reverseBits(self, n: int) -> int:
+        res = 0
+        for i in range(0, 32):
+            res = res << 1
+            if n % 2 == 1:
+                res += 1
+                
+            n = n >> 1
+        return res
+\end{lstlisting}
+
+\section{DP - Climbing stairs}
+You are climbing a staircase. It takes n steps to reach the top.
+
+Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+\begin{lstlisting}
+class Solution:
+    def __init__(self):
+        self.map = {}
+        
+    def climbStairs(self, n: int) -> int:
+        if n == 0:
+            return 0
+        if n == 1:
+            return 1
+        if n == 2:
+            return 2
+        
+        if n in self.map:
+            return self.map[n]
+        
+        self.map[n] = self.climbStairs(n-1) + self.climbStairs(n-2)
+        
+        return self.map[n]
+\end{lstlisting}
+
+\section{Coin Change}
+\begin{lstlisting}
+class Solution:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        memo = {}
+        
+        def unbounded(coins, i, target):
+            key = (i, target)
+            
+            if key in memo:
+                return memo[key]
+            
+            if target == 0:
+                return 0
+            
+            if i<=0 and target > 0:
+                return float('inf')
+            
+            if coins[i-1] > target:
+                memo[key] = unbounded(coins, i-1, target)
+                return memo[key]
+            
+            memo[key] = min(1+unbounded(coins, i, target-coins[i-1]),
+                           unbounded(coins, i-1, target))
+            
+            return memo[key]
+        
+        res = unbounded(coins, len(coins), amount)
+        
+        if res == float('inf'):
+            return -1
+        
+        return res
+\end{lstlisting}
+
+\section{Longest Increasing Subsequence}
+Recursive memoized solution.
+
+Best to explore using nested loops as well.
+\begin{lstlisting}
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        memo = {}
+        
+        def lcs(nums, prev, current):
+            key = (prev, current)
+            
+            if key in memo:
+                return memo[key]
+            
+            if len(nums) == current:
+                return 0
+            
+            c1 = 0
+            
+            if (prev == -1) or (nums[prev] < nums[current]):
+                c1 = 1+lcs(nums, current, current+1)
+            
+            c2 = lcs(nums, prev, current+1)
+            
+            memo[key] = max(c1, c2)
+            
+            return memo[key]
+        
+        return lcs(nums, -1, 0)
+\end{lstlisting}
+
+\section{Longest Common Subsequence}
+\begin{lstlisting}
+class Solution:
+    def longestCommonSubsequence(self, text1: str, text2: str) -> int:
+        memo = {}
+        
+        def lcs(s1, s2, i, j):
+            key = (i, j)
+            
+            if key in memo:
+                return memo[key]
+            
+            if i<=0 or j<=0:
+                return 0
+            
+            if s1[i-1] == s2[j-1]:
+                memo[key] = 1+lcs(s1, s2, i-1, j-1)
+                return memo[key]
+            
+            memo[key] = max(lcs(s1, s2, i, j-1), lcs(s1, s2, i-1, j))
+            
+            return memo[key]
+        
+        return lcs(text1, text2, len(text1), len(text2))
+\end{lstlisting}
+
+\section{Word Break}
+\begin{lstlisting}
+class Solution:
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        dp = [False] * (len(s)+1)
+        dp[len(s)] = True
+        
+        for i in range(len(s), -1, -1):
+            for w in wordDict:
+                if i+len(w) <= len(s) and s[i : i + len(w)] == w:
+                    dp[i] = dp[i+len(w)]
+                
+                if dp[i]:
+                    break
+        
+        return dp[0]
+\end{lstlisting}
+
+Recursive DP
+\begin{lstlisting}
+class Solution:
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        memo = {}
+        
+        def wb(s, wordDict):
+            if s in memo:
+                return memo[s]
+            
+            if len(s) == 0:
+                memo[""] = True
+                return True
+            
+            for word in wordDict:
+                if s.startswith(word) and len(s) >= len(word):
+                    if wb(s[len(word):], wordDict):
+                        return True
+            
+            memo[s] = False
+            
+            return False
+        
+        return wb(s, wordDict)
+\end{lstlisting}
+
+
+\end{document}
