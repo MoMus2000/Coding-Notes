@@ -638,5 +638,97 @@ class Solution:
         return wb(s, wordDict)
 \end{lstlisting}
 
+\section{Combination Sum}
+
+Given an array of distinct integers candidates and a target integer target, return a list of all unique combinations of candidates where the chosen numbers sum to target. You may return the combinations in any order.
+
+Time Complexity = 2\^T (Where T is the target value, as the height of the decision tree is determined by the target value.)
+
+\begin{lstlisting}
+class Solution:
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        res = []
+        
+        def dfs(i, curr, total):
+            if total == target:
+                res.append(curr.copy())
+                return
+            
+            if i>= len(candidates) or total > target:
+                return
+            
+            curr.append(candidates[i])
+            dfs(i, curr, total+candidates[i])
+            curr.pop()
+            dfs(i+1, curr, total)
+            
+            return
+        
+        dfs(0, [], 0)
+        return res
+\end{lstlisting}
+
+\section{House Robbers}
+
+Find the recurrence, code up the recursion.
+
+Recurrence = max(arr[0] + dp(arr[2:]), dp(arr[1:]))
+
+\begin{lstlisting}
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        # recurrence
+        #rob = max(nums[0] + rob(nums[2:]), rob(nums[1:]))
+        memo  = {}
+        
+        def dp(nums, n):
+            if n >= len(nums):
+                return 0
+            
+            if n in memo:
+                return memo[n]
+            
+            memo[n] = max(nums[n] + dp(nums, n+2), dp(nums, n+1))
+            
+            return memo[n]
+        
+        return dp(nums, 0)
+\end{lstlisting}
+
+\section{House Robber II}
+
+This time the first and last house are connected so we split the array into two parts.
+
+We run our house robber I function on arr[:-1] and arr[1:]
+
+\begin{lstlisting}
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        if len(nums) == 1:
+            return nums[0]
+        
+        memo = {}
+        
+        def dp(nums, n):
+            if n >= len(nums):
+                return 0
+            if n in memo:
+                return memo[n]
+            
+            memo[n] = max(nums[n] + dp(nums, n+2), dp(nums, n+1))
+            
+            return memo[n]
+        
+        arr1 = dp(nums[:-1], 0)
+        
+        memo = {}
+        
+        arr2 =  dp(nums[1:], 0)
+        
+        max_ret = max(arr1, arr2)
+        
+        return max_ret
+\end{lstlisting}
+
 
 \end{document}
